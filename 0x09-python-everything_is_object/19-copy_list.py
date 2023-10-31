@@ -1,4 +1,6 @@
 #!/usr/bin/python3
-def copy_list(l):
-    new = l[:]
-    return new
+""" This module copies a list"""
+
+
+def copy_list(list_):
+    return list_[:]
