@@ -14,3 +14,24 @@ My name is Bob
 ... except Exception as e:
 ...     str(e)
 'first_name must be a string'
+
+# Test with first name as a number
+>>> try:
+...     say_my_name(123)
+... except Exception as e:
+...     str(e)
+'first_name must be a string'
+
+# Test with last name as a number
+>>> try:
+...     say_my_name("John", 456)
+... except Exception as e:
+...     str(e)
+'last_name must be a string'
+
+# Test with both first name and last name as numbers
+>>> try:
+...     say_my_name(123, 456)
+... except Exception as e:
+...     str(e)
+'first_name must be a string'

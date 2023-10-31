@@ -14,6 +14,10 @@ def say_my_name(first_name, last_name=""):
     :raises:
     - TypeError: if first_name or last_name is not a string
     """
+    err = "first_name must be a string"
+
+    if not first_name and not last_name:
+        raise TypeError(err)
 
     if not isinstance(first_name, str):
         raise TypeError("first_name must be a string")
