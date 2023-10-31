@@ -1,0 +1,48 @@
+>>> text_indentation = __import__('5-text_indentation').text_indentation
+
+# Test with words ending with a period
+>>> text_indentation("This is a sentence.Another sentence.")
+This is a sentence.
+<BLANKLINE>
+Another sentence.
+<BLANKLINE>
+
+# Test with a question mark
+>>> text_indentation("Is this a question?")
+Is this a question?
+<BLANKLINE>
+
+# Test without any special characters
+>>> text_indentation("No special characters here")
+No special characters here
+
+# Test with a non-string input
+>>> try:
+...     text_indentation(123)
+... except Exception as e:
+...     str(e)
+'text must be a string'
+
+# Test with only special characters
+>>> text_indentation("?.:")
+?
+<BLANKLINE>
+.
+<BLANKLINE>
+:
+<BLANKLINE>
+
+<BLANKLINE>
+
+# Test with words separated by spaces
+>>> text_indentation("Words with spaces.")
+Words with spaces.
+<BLANKLINE>
+
+# Test with spaces and special characters
+>>> text_indentation("Words  with  spaces  ?.  ")
+Words  with  spaces  ?
+<BLANKLINE>
+.
+<BLANKLINE>
+<BLANKLINE>
