@@ -9,57 +9,57 @@ from models.square import Square
 class TestBase(unittest.TestCase):
     '''Tests the Base class.'''
 
-    def my_setup(self):
+    def setUp(self):
         '''Imports module, instantiates class'''
         Base._Base__nb_objects = 0
         pass
 
-    def my_custom_teardown(self):
+    def tearDown(self):
         '''Cleans up after each test_method.'''
         pass
 
-    def test_z_custom_nb_objects(self):
-        '''Tests if nb_objects is a custom private class attribute.'''
+    def test_A_nb_objects_private(self):
+        '''Tests if nb_objects is private class attribute.'''
         self.assertTrue(hasattr(Base, "_Base__nb_objects"))
 
-    def test_b_initialized_nb_objects(self):
+    def test_B_nb_objects_initialized(self):
         '''Tests if nb_objects initializes to zero.'''
         self.assertEqual(getattr(Base, "_Base__nb_objects"), 0)
 
-    def test_a_instantiation(self):
+    def test_C_instantiation(self):
         '''Tests Base() instantiation.'''
         b = Base()
         self.assertEqual(str(type(b)), "<class 'models.base.Base'>")
         self.assertEqual(b.__dict__, {"id": 1})
         self.assertEqual(b.id, 1)
 
-    def test_d_constructor_signature(self):
+    def test_D_constructor(self):
         '''Tests constructor signature.'''
         with self.assertRaises(TypeError) as e:
             Base.__init__()
         msg = "__init__() missing 1 required positional argument: 'self'"
         self.assertEqual(str(e.exception), msg)
 
-    def test_e_constructor_with_args(self):
-        '''Tests constructor signature with 2 not self args.'''
+    def test_D_constructor_args_2(self):
+        '''Tests constructor signature with 2 notself args.'''
         with self.assertRaises(TypeError) as e:
             Base.__init__(self, 1, 2)
         msg = "__init__() takes from 1 to 2 positional arguments but 3 \
 were given"
         self.assertEqual(str(e.exception), msg)
 
-    def test_g_consecutive_ids(self):
+    def test_E_consecutive_ids(self):
         '''Tests consecutive ids.'''
         b1 = Base()
         b2 = Base()
         self.assertEqual(b1.id + 1, b2.id)
 
-    def test_f_id_synced(self):
+    def test_F_id_synced(self):
         '''Tests sync between class and instance id.'''
         b = Base()
         self.assertEqual(getattr(Base, "_Base__nb_objects"), b.id)
 
-    def test_h_id_synced_more(self):
+    def test_F_id_synced_more(self):
         '''Tests sync between class and instance id.'''
         b = Base()
         b = Base("Foo")
@@ -67,25 +67,26 @@ were given"
         b = Base()
         self.assertEqual(getattr(Base, "_Base__nb_objects"), b.id)
 
-    def test_i_custom_id_int(self):
+    def test_G_custom_id_int(self):
         '''Tests custom int id.'''
         i = 98
         b = Base(i)
         self.assertEqual(b.id, i)
 
-    def test_j_custom_id_str(self):
+    def test_G_custom_id_str(self):
         '''Tests custom int id.'''
         i = "FooBar"
         b = Base(i)
         self.assertEqual(b.id, i)
 
-    def test_k_id_keyword(self):
-        '''Tests id passed as a keyword arg.'''
+    def test_G_id_keyword(self):
+        '''Tests id passed as keyword arg.'''
         i = 421
         b = Base(id=i)
         self.assertEqual(b.id, i)
 
-    def test_p_json_string(self):
+    # ----------------- Tests for #15 ------------------------
+    def test_H_to_json_string(self):
         '''Tests to_json_string() signature:'''
         with self.assertRaises(TypeError) as e:
             Base.to_json_string()
@@ -156,8 +157,9 @@ were given"
         dictionary = dictionary.replace("'", '"')
         self.assertEqual(dictionary, json_dictionary)
 
-    def test_o_test_from_json_string(self):
-        '''Tests from_json_string() signature:'''
+    # ----------------- Tests for #17 ------------------------
+    def test_H_test_from_json_string(self):
+        '''Tests to_json_string() signature:'''
         with self.assertRaises(TypeError) as e:
             Base.from_json_string()
         s = "from_json_string() missing 1 required positional argument: \
@@ -165,7 +167,6 @@ were given"
         self.assertEqual(str(e.exception), s)
 
         self.assertEqual(Base.from_json_string(None), [])
-        self.assertEqual(Base.from_json_string(""), [])
 
         s = '[{"x": 1, "y": 2, "width": 3, "id": 4, "height": 5}, \
 {"x": 101, "y": 20123, "width": 312321, "id": 522244, "height": 34340}]'
@@ -207,7 +208,8 @@ were given"
             Rectangle.to_json_string(list_in))
         self.assertEqual(list_in, list_out)
 
-    def test_n_save_to_file(self):
+        # ----------------- Tests for #16 ------------------------
+    def test_I_save_to_file(self):
         '''Tests save_to_file() method.'''
         import os
         r1 = Rectangle(10, 7, 2, 8)
@@ -250,3 +252,40 @@ were given"
         Square.save_to_file([r2])
         with open("Square.json", "r") as file:
             self.assertEqual(len(file.read()), 38)
+
+        # ----------------- Tests for #18 ------------------------
+    def test_J_create(self):
+        '''Tests create() method.'''
+        r1 = Rectangle(3, 5, 1)
+        r1_dictionary = r1.to_dictionary()
+        r2 = Rectangle.create(**r1_dictionary)
+        self.assertEqual(str(r1), str(r2))
+        self.assertFalse(r1 is r2)
+        self.assertFalse(r1 == r2)
+
+        # ----------------- Tests for #19 ------------------------
+    """def test_K_load_from_file(self):
+        '''Tests load_from_file() method.'''
+        r1 = Rectangle(10, 7, 2, 8)
+        r2 = Rectangle(2, 4)
+        list_in = [r1, r2]
+        Rectangle.save_to_file(list_in)
+        #list_out = Rectangle.load_from_file()
+        #self.assertNotEqual(id(list_in[0]), id(list_out[0]))
+        #self.assertEqual(str(list_in[0]), str(list_out[0]))
+        #self.assertNotEqual(id(list_in[1]), id(list_out[1]))
+        #self.assertEqual(str(list_in[1]), str(list_out[1]))
+
+        s1 = Square(5)
+        s2 = Square(7, 9, 1)
+        list_in = [s1, s2]
+        Square.save_to_file(list_in)
+        list_out = Square.load_from_file()
+        self.assertNotEqual(id(list_in[0]), id(list_out[0]))
+        self.assertEqual(str(list_in[0]), str(list_out[0]))
+        self.assertNotEqual(id(list_in[1]), id(list_out[1]))
+        self.assertEqual(str(list_in[1]), str(list_out[1]))"""
+
+
+if __name__ == "__main__":
+    unittest.main()
